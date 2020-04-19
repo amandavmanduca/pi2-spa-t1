@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <!-- Fontawesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+    <title>Controle</title>
+    <!-- Vue JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- Axios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+</head>
+
+<body>
+    </br>
+    <div id="app" class="container">
+        <!-- Menu Superior -->
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">
+                <img src="logo.jpg" width="30" height="30" class="d-inline-block align-top" alt="Logo">
+                Planilha de Controle
+            </a>
+
+            <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                <form class="form-inline">
+                    <input class="form-control form-control-sm mr-sm-2" type="text" 
+                           v-model="filtro" 
+                           @keyup="pesquisar"
+                           placeholder="Filtra Data Listagem">
+                    <button class="btn btn-secondary btn-sm" @click.prevent="listar">Limpar</button>
+                </form>
+            </nav>
+
+            <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                <form class="form-inline" @submit.prevent="salvar">
+                    <input class="form-control form-control-sm mr-sm-2" type="text" 
+                           v-model="filtraData" 
+                           @keyup="listaDadosData"
+                           placeholder="Filtra Data Relatório">
+                </form>
+            </nav>
+        </nav>
+    </br>
+        <div class="mt-12">
+            <div class="row">
+                <!-- Formulário -->
+                <div class="col-sm-6">
+                    <div class="card">
+                        <h5 class="card-header">Inserção de Dados</h5>
+                        <div class="card-body">
+                            <form @submit.prevent="salvar">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="valor"
+                                                v-model="controle.valor" placeholder="Valor R$">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="nome" v-model="controle.nome"
+                                                placeholder="Nome">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="descricao" ref="descricao"
+                                        v-model="controle.descricao" placeholder="Descrição">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" type="text" name="classe" v-model="controle.classe">
+                                        <option value="null" disabled>Classe</option>
+                                        <option value="Serviço de CrossFit">Operações Caixa</option>
+                                        <option value="Serviço de CrossFit">Serviço de CrossFit</option>
+                                        <option value="Bar">Bar</option>
+                                        <option value="Roupas">Roupas</option>
+                                        <option value="Serviço de Nutrição">Serviço de Nutrição</option>
+                                        <option value="Serviço de Fisioterapia">Serviço de Fisioterapia</option>
+                                        <option value="Equipamentos">Equipamentos</option>
+                                        <option value="Reforma">Reforma</option>
+                                        <option value="Equipe">Equipe</option>
+                                        <option value="Serviço de Limpeza">Serviço de Limpeza</option>
+                                        <option value="Materiais de Limpeza">Materiais de Limpeza</option>
+                                        <option value="Materiais de Escritório">Materiais de Escritório</option>
+                                        <option value="Materiais Equipe">Materiais Equipe</option>
+                                        <option value="Fixo">Fixo (Aluguel, Luz, Água, Alarme, CrossX, Contabilidade)</option>
+                                        <option value="CManutenção">Manutenção</option>
+                                        <option value="Patrocínio">Patrocínio</option>
+                                        <option value="Eventos">Eventos</option>
+                                      </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <select class="form-control" type="text" name="caixa" v-model="controle.caixa">
+                                                <option :value="null" disabled>Caixa</option>
+                                                <option value="Caixa-E">Caixa-E</option>
+                                                <option value="Caixa-M">Caixa-M</option>
+                                                <option value="Caixa-V">Caixa-V</option>
+                                              </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <select class="form-control" type="text" name="pagto" v-model="controle.pagto">
+                                                <option :value="null" disabled>Tipo</option>
+                                                <option value="Dinheiro">Dinheiro</option>
+                                                <option value="Boleto">Boleto</option>
+                                                <option value="Transferência">Transferência</option>
+                                                <option value="Crédito">Crédito</option>
+                                                <option value="Débito">Débito</option>
+                                                <option value="Cheque">Cheque</option>
+                                              </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <select class="form-control" type="text" name="acao" v-model="controle.acao">
+                                                <option :value="null" disabled>Ação</option>
+                                                <option value="Abertura">Abertura</option>
+                                                <option value="Entrada">Entrada</option>
+                                                <option value="Saída">Saída</option>
+                                                <option value="Baixa">Baixa</option>
+                                                <option value="Fechamento">Fechamento</option>
+                                              </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                <div class="btn-group w-30" role="group">
+                                    <input type="submit" class="btn btn-danger mr-1" value='Gravar'>
+                                    <input type="reset" class="btn btn-secondary" value='Limpar'>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </br>
+                
+                </div>
+                <div class="col-sm-6">
+                    <div class="card" style="margin-block-end: 10px;">
+                        <h5 class="card-header">Relatório de Dados</h5>
+                        <div class="card-body" v-if="filtraData.length == 0">
+                            Total Transições: {{dados.totalTransicoes}}</br>
+                            <p v-if="dados.aberturas + dados.entradas - dados.saidas - dados.fechamentos !== 0">
+                                Caixa: R$ {{dados.aberturas + dados.entradas - dados.saidas - dados.baixas - dados.fechamentos }}</br>
+                            </p>
+                            <p v-if="dados.aberturas + dados.entradas - dados.saidas - dados.fechamentos == 0">
+                                Fechamento: R$ {{dados.ultimoF | formataValor }}</br>
+                            </p>
+                            
+                        </div>
+                        <div class="card-body" v-if="filtraData.length == 10 || filtraData == 'global'">
+                            Total Transições: {{dados.totalTransicoes}}</br>
+                            Caixa: R$ {{dados.aberturas + dados.entradas - dados.saidas - dados.baixas - dados.fechamentos }}</br>
+                            
+                            </br>
+                            Data: {{filtraData}}</br>
+                            
+                            Transições Hoje: {{dados.totalTransicoesDias}}</br></br>
+                            
+                            Total Entradas: R$ {{dados.entradas | formataValor}}</br>
+                            Total Saídas: R$ {{dados.saidas | formataValor}}</br>
+                            Total Baixas: R$ {{dados.baixas | formataValor}}</br>
+                        </br>
+                            Entrada Banco R$ {{dados.entradasBB | formataValor}}</br>
+                            Saída Banco R$ {{dados.saidasBB | formataValor}}</br>
+                            
+                        </div>
+                    </div>
+                </div>
+                <!-- Listagem -->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <h5 class="card-header">Listagem 
+                            <span v-if="filtro">
+                            [Filtro Data: '{{filtro}}']
+                            </span>
+                        </h5>
+                        <div class="card-body">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Cód.</th>
+                                        <th></th>
+                                        <th style="text-align: left;">Valor</th>
+                                        <th>Nome</th>
+                                        <th>Descrição</th>
+                                        <th>Caixa</th>
+                                        
+                                        <th>Ação</th>
+                                        <th>Atalhos</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="controle in controles" v-bind:key="controle.id">
+                                        <td style='width: 1cm; text-align: center;'>{{controle.id}}</td>
+
+                                        <td style='width: 1cm; text-align: center;' v-if="controle.pagto === 'Dinheiro'">
+                                            <button title="Dinheiro">
+                                                <i class="far fa-money-bill-alt btn-success" id="Dinheiro"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 1cm; text-align: center;' v-if="controle.pagto === 'Débito'">
+                                            <button title="Débito">
+                                                <i class="far fa-credit-card btn-warning"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 1cm; text-align: center;' v-if="controle.pagto === 'Crédito'">
+                                            <button title="Crédito">
+                                                <i class="far fa-credit-card btn-primary"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 1cm; text-align: center;' v-if="controle.pagto === 'Boleto'">
+                                            <button title="Boleto">
+                                                <i class="fas fa-receipt"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 1cm; text-align: center;' v-if="controle.pagto === 'Transferência'">
+                                            <button title="Transferência">
+                                                <i class="fas fa-exchange-alt"></i>
+                                            </button>
+                                        </td>
+                                        
+                                        <td v-if="controle.acao === 'Abertura' || controle.acao === 'Entrada'" style='width: 3cm'>R$ {{controle.valor | formataValor}}</td>
+                                        <td v-if="controle.acao === 'Fechamento' || controle.acao === 'Saída' || controle.acao === 'Baixa'" style='width: 3cm'>- R$ {{controle.valor | formataValor}}</td>
+
+                                        <td style='width: 5cm; text-align: left;'>{{controle.nome | formataNome }}</td>
+                                        <td>{{controle.descricao}}</td>
+                                        <td style='width: 2cm'>{{controle.caixa}}</td>
+                                        
+
+                                        <td style='width: 2cm; text-align: center;' v-if="controle.acao === 'Abertura'">
+                                            <button title="Abertura">
+                                                <i class="fas fa-book-reader"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 2cm; text-align: center;' v-if="controle.acao === 'Fechamento'">
+                                            <button title="Fechamento">
+                                                <i class="fas fa-book"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 2cm; text-align: center;' v-if="controle.acao === 'Entrada'">
+                                            <button title="Entrada">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 2cm; text-align: center;' v-if="controle.acao === 'Saída'">
+                                            <button title="Saída">
+                                                <i class="fas fa-shopping-cart"></i>
+                                            </button>
+                                        </td>
+                                        <td style='width: 2cm; text-align: center;' v-if="controle.acao === 'Baixa'">
+                                            <button title="Baixa">
+                                                <i class="fas fa-university"></i>
+                                            </button>
+                                        </td>
+
+                                        <td style='width: 2.5cm'>
+                                            <button class="btn btn-light btn-sm" title="Alterar"
+                                                @click="editar(controle.id)">
+                                                <i class="far fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-light btn-sm" title="Excluir"
+                                                @click="excluir(controle.id, controle.descricao)">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="controles.js"></script>
+</body>
+
+</html>
