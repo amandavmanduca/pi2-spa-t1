@@ -103,6 +103,7 @@ def alteracao(id):
     #controle.dia = request.json['dia']
     controle.nome = request.json['nome']
     controle.descricao = request.json['descricao']
+    controle.classe = request.json['classe']
     controle.caixa = request.json['caixa']
     controle.pagto = request.json['pagto']
     controle.acao = request.json['acao']
@@ -156,13 +157,30 @@ def dados():
     
     ultimoF = (db.session.query((Controle.valor))).order_by(-Controle.id).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Fechamento").filter(Controle.pagto=="Dinheiro").first()[0]
     
+    todasEntradas = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Entrada").first()[0]
+    todasEntradasCF = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Entrada").filter(Controle.classe=="Serviço de CrossFit").first()[0]
+    todasEntradasBar = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Entrada").filter(Controle.classe=="Bar").first()[0]
+    todasEntradasRoupa = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Entrada").filter(Controle.classe=="Roupas").first()[0]
+    todasEntradasNutri = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Entrada").filter(Controle.classe=="Serviço de Nutrição").first()[0]
+    
+
+    todasSaidas = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Saída").first()[0]
+    todasSaidasCF = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Saída").filter(Controle.classe=="Serviço de CrossFit").first()[0]
+    todasSaidasBar = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Saída").filter(Controle.classe=="Bar").first()[0]
+    todasSaidasRoupa = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Saída").filter(Controle.classe=="Roupas").first()[0]
+    todasSaidasNutri = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Saída").filter(Controle.classe=="Serviço de Nutrição").first()[0]
+   
 
     return jsonify(totalTransicoes=totalTransicoes,totalTransicoesDias=totalTransicoesDia,
     entradasM=entradasM, saidasM=saidasM, entradasV=entradasV, saidasV=saidasV,
 
     aberturas=aberturas, fechamentos=fechamentos, entradas=entradas, saidas=saidas,
     baixas=baixas, baixasM=baixasM, baixasV=baixasV,
-    entradasBB=entradasBB, saidasBB=saidasBB, ultimoF=ultimoF)
+    entradasBB=entradasBB, saidasBB=saidasBB, ultimoF=ultimoF,
+    todasEntradas=todasEntradas, todasEntradasCF=todasEntradasCF, todasEntradasBar=todasEntradasBar,
+    todasEntradasRoupa=todasEntradasRoupa, todasEntradasNutri=todasEntradasNutri,
+    todasSaidas=todasSaidas, todasSaidasCF=todasSaidasCF, todasSaidasBar=todasSaidasBar, todasSaidasRoupa=todasSaidasRoupa,
+    todasSaidasNutri=todasSaidasNutri)
 
 
 @app.route('/dados/<dia>')
@@ -191,13 +209,15 @@ def dados2(dia):
     baixasM = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-M").filter(Controle.acao=="Baixa").filter(Controle.pagto=="Dinheiro").filter(Controle.dia == str(dia)).first()[0]
     baixasV = (db.session.query(db.func.sum(Controle.valor))).filter(Controle.caixa=="Caixa-V").filter(Controle.acao=="Baixa").filter(Controle.pagto=="Dinheiro").filter(Controle.dia == str(dia)).first()[0]
 
-    
+    ultimoA = (db.session.query((Controle.valor))).order_by(-Controle.id).filter(Controle.caixa=="Caixa-E").filter(Controle.acao=="Abertura").filter(Controle.pagto=="Dinheiro").first()[0]
+  
+
     return jsonify(totalTransicoes=totalTransicoes,totalTransicoesDias=totalTransicoesDia,
     entradasM=entradasM, saidasM=saidasM, entradasV=entradasV, saidasV=saidasV,
 
     aberturas=aberturas, fechamentos=fechamentos, entradas=entradas, saidas=saidas,
     baixas=baixas, baixasM=baixasM, baixasV=baixasV,
-    entradasBB=entradasBB, saidasBB=saidasBB)
+    entradasBB=entradasBB, saidasBB=saidasBB, ultimoA=ultimoA)
 
 
 

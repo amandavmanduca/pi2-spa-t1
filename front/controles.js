@@ -120,6 +120,13 @@ new Vue({
           .get(`http://127.0.0.1:5000/controles/filtra/${this.filtro}`)
           .then((response) => (this.controles = response.data));
       }
+    },
+    limpar() {
+      this.controle = {};
+      this.controle.classe = null;
+      this.controle.caixa = null;
+      this.controle.pagto = null;
+      this.controle.acao = null;
     }
 
     
@@ -151,7 +158,7 @@ new Vue({
       if (value != null) {
         return value.toFixed(2);
       } else {
-        return "0";
+        return 0;
       }
 
     },

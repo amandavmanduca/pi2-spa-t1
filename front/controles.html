@@ -134,8 +134,9 @@
                                 
 
                                 <div class="btn-group w-30" role="group">
-                                    <input type="submit" class="btn btn-danger mr-1" value='Gravar'>
-                                    <input type="reset" class="btn btn-secondary" value='Limpar'>
+                                    <input type="submit" class="btn btn-danger mr-1" value='Gravar' style="width: 5em;">
+                                    <input class="btn btn-secondary" style="width: 5em;" value='Limpar' @click="limpar">
+                                    
                                 </div>
                             </form>
                         </div>
@@ -143,38 +144,83 @@
                 </br>
                 
                 </div>
-                <div class="col-sm-6">
+                <!-- Tabela Padrão -->
+                <div class="col-sm-6" v-if="filtraData !== 'global'">
                     <div class="card" style="margin-block-end: 10px;">
                         <h5 class="card-header">Relatório de Dados</h5>
                         <div class="card-body" v-if="filtraData.length == 0">
                             Total Transições: {{dados.totalTransicoes}}</br>
-                            <p v-if="dados.aberturas + dados.entradas - dados.saidas - dados.fechamentos !== 0">
+                            <p v-if="dados.aberturas + dados.entradas - dados.saidas - dados.baixas - dados.fechamentos !== 0">
                                 Caixa: R$ {{dados.aberturas + dados.entradas - dados.saidas - dados.baixas - dados.fechamentos }}</br>
                             </p>
-                            <p v-if="dados.aberturas + dados.entradas - dados.saidas - dados.fechamentos == 0">
+                            <p v-if="dados.aberturas + dados.entradas - dados.saidas - dados.baixas - dados.fechamentos == 0">
                                 Fechamento: R$ {{dados.ultimoF | formataValor }}</br>
                             </p>
                             
                         </div>
-                        <div class="card-body" v-if="filtraData.length == 10 || filtraData == 'global'">
-                            Total Transições: {{dados.totalTransicoes}}</br>
-                            Caixa: R$ {{dados.aberturas + dados.entradas - dados.saidas - dados.baixas - dados.fechamentos }}</br>
+                        <div class="card-body" v-if="filtraData.length == 10">
                             
-                            </br>
+                            
                             Data: {{filtraData}}</br>
-                            
-                            Transições Hoje: {{dados.totalTransicoesDias}}</br></br>
-                            
-                            Total Entradas: R$ {{dados.entradas | formataValor}}</br>
-                            Total Saídas: R$ {{dados.saidas | formataValor}}</br>
-                            Total Baixas: R$ {{dados.baixas | formataValor}}</br>
+                            Movimentações: {{dados.totalTransicoesDias}}</br>
+                        </br>
+                            Entradas Dinheiro: R$ {{dados.entradas | formataValor}}</br>
+                            Saídas Dinheiro: R$ {{dados.saidas | formataValor}}</br>
+                            Baixas: R$ {{dados.baixas | formataValor}}</br>
                         </br>
                             Entrada Banco R$ {{dados.entradasBB | formataValor}}</br>
                             Saída Banco R$ {{dados.saidasBB | formataValor}}</br>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- Tabela Global -->
+                <div class="col-sm-3" v-if="filtraData == 'global'">
+                    <div class="card" style="margin-block-end: 10px;">     
+                        <h6 class="card-header">Relatório Global Entradas</h6>
+
+                        <div class="card-body" v-if="filtraData == 'global'">
+                            
+                            
+
+                            Entradas Dinheiro: R$ {{dados.entradas | formataValor}}</br>
+                            Entrada Banco R$ {{dados.entradasBB | formataValor}}</br>
+                            Baixas: R$ {{dados.baixas | formataValor}}</br>
+                        
+                            
+                            
+                        </br>
+                            Total Entradas R$ {{dados.todasEntradas | formataValor}}</br>
+                            CrossFit R$ {{dados.todasEntradasCF | formataValor}}  ({{dados.todasEntradasCF/dados.todasEntradas * 100 | formataValor}}%)</br>
+                            Bar R$ {{dados.todasEntradasBar | formataValor}}  ({{dados.todasEntradasBar/dados.todasEntradas * 100 | formataValor}}%)</br>
+                            Roupas R$ {{dados.todasEntradasRoupa | formataValor}}  ({{dados.todasEntradasRoupa/dados.todasEntradas * 100 | formataValor}}%)</br>
+                            Nutrição R$ {{dados.todasEntradasNutri | formataValor}}  ({{dados.todasEntradasNutri/dados.todasEntradas * 100 | formataValor}}%)</br>
                             
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-3" v-if="filtraData == 'global'">
+                    <div class="card" style="margin-block-end: 10px;">
+                    
+                        <h6 class="card-header">Relatório Global Saídas</h6>
+
+                        <div class="card-body" v-if="filtraData == 'global'">
+
+                            
+                            Saídas Dinheiro: R$ {{dados.saidas | formataValor}}</br>
+                            Saída Banco R$ {{dados.saidasBB | formataValor}}</br>
+                        </br></br>
+                            Total Saídas R$ {{dados.todasSaidas | formataValor}}</br>
+                            CrossFit R$ {{dados.todasSaidasCF | formataValor}}  ({{dados.todasSaidasCF/dados.todasSaidas * 100 | formataValor}}%)</br>
+                            Bar R$ {{dados.todasSaidasBar | formataValor}}  ({{dados.todasSaidasBar/dados.todasSaidas * 100 | formataValor}}%)</br>
+                            Roupas R$ {{dados.todasSaidasRoupa | formataValor}}  ({{dados.todasSaidasRoupa/dados.todasSaidas * 100 | formataValor}}%)</br>
+                            Nutrição R$ {{dados.todasSaidasNutri | formataValor}}  ({{dados.todasSaidasNutri/dados.todasSaidas * 100 | formataValor}}%)</br>
+                            
+                        </div>
+                    </div>
+                </div>
+
+
                 <!-- Listagem -->
                 <div class="col-sm-12">
                     <div class="card">
